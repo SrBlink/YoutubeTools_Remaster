@@ -1,0 +1,70 @@
+.tools-container {
+    display: flex;
+    position: fixed;
+    right: 0;
+    top: 100px;
+    max-width: 200px;
+    height: 200px;
+    z-index: 9999;
+    background-color: #ffffff00;
+    overflow: hidden;
+  }
+  
+  .tools-seta-painel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #252525aa;
+    color: #fff;
+    width: 30px;
+    height: 50px;
+    border-radius: 10px 0px 0px 10px;
+    cursor: pointer;
+    font-size: 25px;
+  }
+  
+  .tools-seta-painel:hover {
+    background-color: #252525;
+  }
+  
+  .tools-painel {
+    color: #ffffffaa;
+    background-color: #252525aa;
+    border-radius: 0px 0px 0px 10px;
+    max-width: 0px;
+    transition: max-width 0.3s ease-in-out;
+  }
+  
+  .tools-painel-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 15px;
+  }
+  
+  .active {
+    max-width: 120px;
+  }
+  .tools-painel-label {
+    font-weight: 500;
+    font-size: 13px;
+    margin: 0px 0px 5px 0px;
+  }
+  
+  .tools-painel-select {
+    outline: none;
+    border-radius: 5px;
+    margin-bottom: 15px;
+  }
+  
+  .tools-painel-range {
+    outline: none;
+    border-radius: 5px;
+  }
+  
+  .tools-painel-small{
+    text-align: end;
+    font-size: 10px;
+    color: #fff;
+  }
+  

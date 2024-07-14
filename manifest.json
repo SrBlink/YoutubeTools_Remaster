@@ -1,0 +1,43 @@
+{
+  "name": "Youtube Tools 2.0",
+  "version": "1.0",
+  "description": "Ferramentas para o youtube",
+  "action": {
+    "default_title": "Youtube Tools",
+    "default_icon": "./icons/icon512.png"
+  },
+  "icons": {
+    "128": "./icons/icon128.png"
+  },
+  "permissions": [
+    "activeTab"
+  ],
+  "manifest_version": 3,
+  "background": {
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/*"
+      ],
+      "css": [
+        "./src/style.css"
+      ],
+      "js": [
+        "./src/Infrastructure/dependence.js",
+        "./src/Utils/event.js",
+        "./src/Utils/constants.js",
+        "./src/Utils/prototypes.js",
+        "./src/Utils/route.js",
+        "./src/Utils/utils.js",
+        "./src/Utils/libs.js",
+        "./src/Utils/window.js",
+        "./src/Components/menu.js",
+        "./src/Components/video.screen.js",
+        "./src/Storage/storage.js",
+        "./src/index.js"
+      ]
+    }
+  ]
+}

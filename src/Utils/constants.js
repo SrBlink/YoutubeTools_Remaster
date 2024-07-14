@@ -49,12 +49,14 @@ const Constants = {
         },
         Route: {
             VideoScreen: 'VIDEO_SCREEN',
+            ExitVideoScreen: 'VIDEO_SCREEN_EXIT',
             Default: 'DEFAULT'
         },
         Window: {
             FocusScreen: 'FOCUS_SCREEN',
             CloseScreen: 'CLOSE_SCREEN'
         }
+
     }
 
 }

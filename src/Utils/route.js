@@ -1,38 +1,55 @@
 
 
 function MonitoringRoute() {
-    var currentUrl = window.location.href;
-    var intervalMonitoring;
-    var parameters = getParametersUrl();
-    var dataEvent = { parameters };
 
+    var oldRoute = {
+        url: window.location.href,
+        queryStrings: window.location.search,
+        parameters: getParametersUrl(),
+    }
+
+    var intervalMonitoring;
+
+    
 
     function on() {
 
 
         if (isVideoScreenUrl()) {
             console.log("emiting event video Screen...")
-            _event.emit(Constants.Events.Route.VideoScreen, dataEvent)
+            _event.emit(Constants.Events.Route.VideoScreen, { parameters: oldRoute.parameters })
         } else {
             console.log("emiting event Default Screen...")
-            _event.emit(Constants.Events.Route.Default, dataEvent);
+            _event.emit(Constants.Events.Route.Default, { parameters: oldRoute.parameters });
         }
 
         intervalMonitoring = setInterval(() => {
-            var url = window.location.href;
-            if (currentUrl != url) {
-                parameters = getParametersUrl();
-                dataEvent = { parameters };
+
+            var newRoute = {
+                url: window.location.href,
+                queryStrings: window.location.search,
+                parameters: getParametersUrl(),
+            };
+
+            if (oldRoute.url != newRoute.url) {
+
+                if (oldRoute.parameters['v']) {
+                    console.log("Enviando evento de route saindo da tela de video...");
+                    _event.emit(Constants.Events.Route.ExitVideoScreen, { parameters: oldRoute.parameters })
+                }
 
                 if (isVideoScreenUrl()) {
                     console.log("emiting event video Screen...")
-                    _event.emit(Constants.Events.Route.VideoScreen, dataEvent)
+                    _event.emit(Constants.Events.Route.VideoScreen, { parameters: newRoute.parameters })
                 } else {
                     console.log("emiting event Default Screen...")
-                    _event.emit(Constants.Events.Route.Default, dataEvent);
+                    _event.emit(Constants.Events.Route.Default, { parameters: newRoute.parameters });
                 }
 
-                currentUrl = url;
+                oldRoute = {
+                    ...newRoute
+                }
+
             }
         }, 1000)
     }

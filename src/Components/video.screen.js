@@ -60,6 +60,7 @@ function VideoScreen() {
 
 
     function onEvents() {
+        _event.on(Constants.Events.Route.ExitVideoScreen, (params) => deleteVideoCheck(params))
         _event.on(Constants.Events.Route.VideoScreen, deleteVideoCheck)
         _event.on(Constants.Events.Route.VideoScreen, refreshVideoScreen)
         _event.on(Constants.Events.Route.VideoScreen, refreshDefaultScreen)
@@ -97,8 +98,15 @@ function VideoScreen() {
         _storageLocal.insert(keyVideo, { data: 'check' });
     }
 
-    function deleteVideoCheck() {
-        const keyVideo = _route.getParametersUrl()['v'];
+    function deleteVideoCheck(data = null) {
+        var keyVideo;
+
+        if (data) {
+            keyVideo = data.parameters['v'];
+        } else {
+            keyVideo = _route.getParametersUrl()['v'];
+        }
+
         _storageLocal.deleteByid(keyVideo);
     }
 

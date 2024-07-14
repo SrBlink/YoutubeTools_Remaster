@@ -10,6 +10,9 @@ function CreateMenuConfig() {
         selectExpandedMenu: null,
         inputSpeedMenu: null,
         smallSpeedMenu: null,
+        removedViewed: null,
+        removedReels: null,
+        removedMixPlaylist: null,
     }
 
     async function on() {
@@ -25,16 +28,24 @@ function CreateMenuConfig() {
             Resolution: _storageLocal.get(Constants.Storage.Resolution)?.data,
             Expanded: _storageLocal.get(Constants.Storage.Expanded)?.data,
             Speed: (_storageLocal.get(Constants.Storage.Speed)?.data),
+            RemovedViewed: _storageLocal.get(Constants.Storage.RemovedViewed)?.data,
+            RemovedReels: _storageLocal.get(Constants.Storage.RemovedReels)?.data,
+            RemovedMixPlaylist: _storageLocal.get(Constants.Storage.RemovedMixPlaylist)?.data,
         }
 
         controlsMenu.selectResolutionMenu.value = storageValues.Resolution ?? Constants.Video.Resolution.default;
         controlsMenu.selectExpandedMenu.value = storageValues.Expanded ?? Constants.Video.Expanded.default;
         controlsMenu.inputSpeedMenu.value = storageValues.Speed ?? Constants.Video.Speed.default;
         controlsMenu.smallSpeedMenu.innerHTML = `${storageValues.Speed != null ? storageValues.Speed / 100 * Constants.Video.Speed.MaxSpeed : Constants.Video.Speed.default}x`;
+        controlsMenu.removedViewed.checked = storageValues.RemovedViewed
+        controlsMenu.removedReels.checked = storageValues.RemovedReels
+        controlsMenu.removedMixPlaylist.checked = storageValues.RemovedMixPlaylist
+
     }
 
     function onEvents() {
         _event.on(Constants.Events.Route.VideoScreen, () => handleShowMenu(true));
+        _event.on(Constants.Events.Route.Default, () => handleShowMenu(true));
         _event.on(Constants.Events.Route.VideoScreen, refreshMenuConfig);
     }
 
@@ -69,6 +80,19 @@ function CreateMenuConfig() {
                         <input id="input-speed-option-menu" class="tools-painel-range" type="range" />
                         <small id="small-speed-text-menu"class="tools-painel-small"> </small>
 
+                        <label class="tools-painel-label">Remoção</label>
+                        <div class="tools-container-checkbox"> 
+                            <input type="checkbox" id="input-checkbox-visualizacao-option" name="input-checkbox-visualizacao" />
+                            <label for="input-checkbox-visualizacao-option">Visualizados</label>
+                        </div>
+                        <div class="tools-container-checkbox"> 
+                            <input type="checkbox" id="input-checkbox-reels-option" name="input-checkbox-reels" />
+                            <label for="input-checkbox-reels-option">Reels</label>
+                        </div>
+                        <div class="tools-container-checkbox"> 
+                            <input type="checkbox" id="input-checkbox-mix-option" name="input-checkbox-mix" />
+                            <label for="input-checkbox-mix-option">Mix Playlists</label>
+                        </div>
                     </div>
                 </div>
              </div>       
@@ -84,6 +108,9 @@ function CreateMenuConfig() {
         controlsMenu.selectExpandedMenu = await doc.qAsync('#select-expanded-option-menu');
         controlsMenu.inputSpeedMenu = await doc.qAsync('#input-speed-option-menu');
         controlsMenu.smallSpeedMenu = await doc.qAsync('#small-speed-text-menu');
+        controlsMenu.removedViewed = await doc.qAsync('#input-checkbox-visualizacao-option')
+        controlsMenu.removedReels = await doc.qAsync('#input-checkbox-reels-option')
+        controlsMenu.removedMixPlaylist = await doc.qAsync('#input-checkbox-mix-option')
     }
 
     async function createEvents() {
@@ -93,6 +120,28 @@ function CreateMenuConfig() {
         controlsMenu.selectResolutionMenu.event('change', handleResolution);
         controlsMenu.selectExpandedMenu.event('change', handleExpanded);
         controlsMenu.inputSpeedMenu.event('input', handleSpeed);
+        controlsMenu.removedViewed.event('change', handleRemovedViewed);
+        controlsMenu.removedReels.event('change', handleRemovedReels);
+        controlsMenu.removedMixPlaylist.event('change', handleRemovedMixPlaylist);
+
+    }
+
+    function handleRemovedMixPlaylist(event) {
+        const activeRemoved = event?.target?.checked;
+        _storageLocal.insert(Constants.Storage.RemovedMixPlaylist, { data: activeRemoved });
+        _event.emit(Constants.Events.MenuConfig.RemovedMixPlaylist, activeRemoved);
+    }
+
+    function handleRemovedReels(event) {
+        const activeRemoved = event?.target?.checked;
+        _storageLocal.insert(Constants.Storage.RemovedReels, { data: activeRemoved });
+        _event.emit(Constants.Events.MenuConfig.RemovedReels, activeRemoved);
+    }
+
+    function handleRemovedViewed(event) {
+        const activeRemoved = event?.target?.checked;
+        _storageLocal.insert(Constants.Storage.RemovedViewed, { data: activeRemoved });
+        _event.emit(Constants.Events.MenuConfig.RemovedViewed, activeRemoved);
 
     }
 

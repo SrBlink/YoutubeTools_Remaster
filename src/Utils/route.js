@@ -13,15 +13,13 @@ function MonitoringRoute() {
         if (isVideoScreenUrl()) {
             console.log("emiting event video Screen...")
             _event.emit(Constants.Events.Route.VideoScreen, dataEvent)
+        } else {
+            console.log("emiting event Default Screen...")
+            _event.emit(Constants.Events.Route.Default, dataEvent);
         }
 
         intervalMonitoring = setInterval(() => {
             var url = window.location.href;
-
-            console.log("Monitoring route ...", currentUrl, url)
-
-
-
             if (currentUrl != url) {
                 parameters = getParametersUrl();
                 dataEvent = { parameters };

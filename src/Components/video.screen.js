@@ -1,5 +1,9 @@
 function VideoScreen() {
 
+    var intervalRemovedVideoViewed;
+    var intervalRemovedReels;
+    var intervalRemovedMixPlaylists;
+
     async function on() {
         onEvents();
         deleteVideoCheck();
@@ -13,14 +17,12 @@ function VideoScreen() {
             return
         };
 
-        const volumeStorage = JSON.parse(_storageLocal.get(Constants.Storage.Volume)?.data);
-
-        const storageValues = {
-            Resolution: _storageLocal.get(Constants.Storage.Resolution)?.data,
-            Expanded: _storageLocal.get(Constants.Storage.Expanded)?.data,
-            Speed: (_storageLocal.get(Constants.Storage.Speed)?.data ?? 0) / 100 * Constants.Video.Speed.MaxSpeed,
-            Volume: volumeStorage.muted ? 0 : volumeStorage.volume / 100, //Criar método para atualizar a barra de audio do youtube com base no valor.
+        if (!doc.hidden) {
+            insertVideoCheck();
         }
+
+
+        const storageValues = getStorageValues();
 
         console.log("aplicando as config no video ...")
 
@@ -28,13 +30,41 @@ function VideoScreen() {
         await setVideoExpanded(storageValues.Expanded);
         await setVideoResolution(storageValues.Resolution);
         await setVolumeVideo(storageValues.Volume);
+
+
     }
 
+    async function refreshDefaultScreen() {
+
+        const storageValues = getStorageValues();
+
+        setRemovedViewed(storageValues.RemovedViewed);
+        setRemovedReels(storageValues.RemovedReels);
+        setRemovedMixPlaylist(storageValues.RemovedMixPlaylist);
+    }
+
+
+    function getStorageValues() {
+        const volumeStorage = JSON.parse(_storageLocal.get(Constants.Storage.Volume)?.data);
+
+        return {
+            Resolution: _storageLocal.get(Constants.Storage.Resolution)?.data,
+            Expanded: _storageLocal.get(Constants.Storage.Expanded)?.data,
+            Speed: (_storageLocal.get(Constants.Storage.Speed)?.data ?? 0) / 100 * Constants.Video.Speed.MaxSpeed,
+            Volume: volumeStorage.muted ? 0 : volumeStorage.volume / 100, //Criar método para atualizar a barra de audio do youtube com base no valor.
+            RemovedViewed: _storageLocal.get(Constants.Storage.RemovedViewed)?.data,
+            RemovedReels: _storageLocal.get(Constants.Storage.RemovedReels)?.data,
+            RemovedMixPlaylist: _storageLocal.get(Constants.Storage.RemovedMixPlaylist)?.data,
+        }
+    }
 
 
     function onEvents() {
         _event.on(Constants.Events.Route.VideoScreen, deleteVideoCheck)
         _event.on(Constants.Events.Route.VideoScreen, refreshVideoScreen)
+        _event.on(Constants.Events.Route.VideoScreen, refreshDefaultScreen)
+
+        _event.on(Constants.Events.Route.Default, refreshDefaultScreen)
 
         _event.on(Constants.Events.Window.CloseScreen, deleteVideoCheck)
         _event.on(Constants.Events.Window.FocusScreen, async () => {
@@ -48,6 +78,9 @@ function VideoScreen() {
         _event.on(Constants.Events.MenuConfig.Resolution, setVideoResolution)
         _event.on(Constants.Events.MenuConfig.Expanded, setVideoExpanded)
         _event.on(Constants.Events.MenuConfig.Speed, setVideoSpeed)
+        _event.on(Constants.Events.MenuConfig.RemovedViewed, setRemovedViewed)
+        _event.on(Constants.Events.MenuConfig.RemovedReels, setRemovedReels)
+        _event.on(Constants.Events.MenuConfig.RemovedMixPlaylist, setRemovedMixPlaylist)
 
     }
 
@@ -78,7 +111,7 @@ function VideoScreen() {
 
         detailsVideo.click();
 
-        const menuVideo = await doc.qAllAsync('.ytp-menuitem');
+        const menuVideo = doc.qAll('.ytp-menuitem');
 
         const resolutionMenu = menuVideo?.find(optionItem => optionItem.innerText.toUpperCase()?.indexOf('QUALIDADE') > -1);
 
@@ -86,7 +119,7 @@ function VideoScreen() {
 
         resolutionMenu.click();
 
-        var listResolution = await doc.qAllAsync('.ytp-menuitem[role=menuitemradio]');
+        var listResolution = doc.qAll('.ytp-menuitem[role=menuitemradio]');
 
         //Retirar todos as resoluções premium da lista (Resolução Premium não da pra ser selecionada por usuários comuns)
         listResolution = listResolution?.filter(resolutionItem => resolutionItem?.innerText.toUpperCase()?.indexOf('PREMIUM') == -1);
@@ -150,17 +183,18 @@ function VideoScreen() {
             buttonLegend.click();
     }
 
-    function setRemoveViewed(active) {
-
-        if (active && interval) return;
+    function setRemovedViewed(active) {
 
         if (!active) {
-            clearInterval(interval)
+            console.log("Parando intervalo de remoção de video visualizado...")
+            clearInterval(intervalRemovedVideoViewed);
             return;
         }
 
-        var interval = setInterval(() => {
+        clearInterval(intervalRemovedVideoViewed);
+        console.log("Iniciando busca de videos visualizados para remoção...")
 
+        intervalRemovedVideoViewed = setInterval(() => {
             var listVideosDelete = [];
 
             listVideosDelete.push(...doc.qAll('ytd-video-renderer'))
@@ -175,24 +209,35 @@ function VideoScreen() {
             listVideosDelete?.filter(videoLayer => videoLayer.q('#progress'))?.forEach(videosViewed => {
                 if (videosViewed) {
                     console.log("Videos viewed removed ...")
-                    videosViewed?.remove()
+                    videosViewed.innerHTML = '';
                 }
             })
 
         }, Constants.TimeVideosRemove);
     }
 
-    function setRemoveReels(active) {
-        if (active && interval) return;
+    function setRemovedReels(active) {
 
         if (!active) {
-            clearInterval(interval)
+            console.log("Parando intervalo de remoção de reels...")
+            clearInterval(intervalRemovedReels);
             return;
         }
 
-        var interval = setInterval(() => {
+        clearInterval(intervalRemovedReels);
+        console.log("Iniciando busca de reels e shorts para remoção...")
 
-            doc.qAll('ytd-reel-shelf-renderer')?.forEach(reels => {
+        intervalRemovedReels = setInterval(() => {
+
+            var listVideosDelete = [];
+
+            //Retirar os reels de bandeja.
+            listVideosDelete.push(...doc.qAll('ytd-reel-shelf-renderer'));
+
+            //Retirar os reels de video (shorts)
+            listVideosDelete.push(...doc.qAll('ytd-video-renderer badge-shape[aria-label="Shorts"]'))
+
+            listVideosDelete?.forEach(reels => {
                 if (reels) {
                     console.log('Reels removed...')
                     reels?.remove()
@@ -202,17 +247,25 @@ function VideoScreen() {
         }, Constants.TimeVideosRemove);
     }
 
-    function setRemoveMixPlaylist(active) {
-        if (active && interval) return;
+    function setRemovedMixPlaylist(active) {
 
         if (!active) {
-            clearInterval(interval)
+            console.log("Parando intervalo de remoção de mix Playlists...")
+            clearInterval(intervalRemovedMixPlaylists)
             return;
         }
 
-        var interval = setInterval(() => {
+        clearInterval(intervalRemovedMixPlaylists)
 
-            doc.qAll('ytd-radio-renderer')?.forEach(mixPlaylist => {
+        console.log("Iniciando busca de MixPlaylists para remoção...")
+        intervalRemovedMixPlaylists = setInterval(() => {
+
+            var listVideosDelete = [];
+
+            //Busca mix de playlist apenas na tela de busca do youtube.
+            listVideosDelete.push(...doc.qAll('ytd-radio-renderer'));
+
+            listVideosDelete?.forEach(mixPlaylist => {
                 if (mixPlaylist) {
                     console.log('MixPlaylist removed...')
                     mixPlaylist?.remove()
@@ -255,8 +308,6 @@ function VideoScreen() {
         video.volume = volume;
         await updateIconVolume(volume);
     }
-
-
 
     return {
         on

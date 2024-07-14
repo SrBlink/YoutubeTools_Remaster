@@ -166,9 +166,9 @@ function VideoScreen() {
 
         if (!velocidade) return;
 
-        const video = await doc.qAsync('video')
+        const video = await doc.qAttributeAsync('video', 'src')
 
-        if (!video || !_validator.videoIsValid(video)) return;
+        if (!video) return;
 
         video.playbackRate = velocidade;
     }

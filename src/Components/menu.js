@@ -53,8 +53,8 @@ function CreateMenuConfig() {
     }
 
     async function createMenuTemplate() {
-        const body = await doc.qAsync('body');
 
+        const body = await doc.qAsync('body');
 
         const menuHtml = `
              <div class="tools-container"> 
@@ -117,8 +117,6 @@ function CreateMenuConfig() {
     }
 
     async function createEvents() {
-
-
         controlsMenu.arrowMenu.event('click', () => handleShowMenu());
         controlsMenu.selectResolutionMenu.event('change', handleResolution);
         controlsMenu.selectExpandedMenu.event('change', handleExpanded);

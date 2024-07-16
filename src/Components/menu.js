@@ -36,8 +36,8 @@ function CreateMenuConfig() {
         console.log("storageValues refreshMenuConfig Speed", storageValues.Speed)
         controlsMenu.selectResolutionMenu.value = storageValues.Resolution ?? Constants.Video.Resolution.default;
         controlsMenu.selectExpandedMenu.value = storageValues.Expanded ?? Constants.Video.Expanded.default;
-        controlsMenu.inputSpeedMenu.value = storageValues.Speed ?? Constants.Video.Speed.default;
-        controlsMenu.smallSpeedMenu.innerHTML = `${storageValues.Speed != null ? (storageValues.Speed / 100) * Constants.Video.Speed.MaxSpeed : Constants.Video.Speed.default}x`;
+        controlsMenu.inputSpeedMenu.value = storageValues.Speed || Constants.Video.Speed.Default;
+        controlsMenu.smallSpeedMenu.innerHTML = `${storageValues.Speed != null ? (storageValues.Speed / 100) * Constants.Video.Speed.MaxSpeed : Constants.Video.Speed.MaxSpeed / 2}x`;
         controlsMenu.removedViewed.checked = storageValues.RemovedViewed
         controlsMenu.removedReels.checked = storageValues.RemovedReels
         controlsMenu.removedMixPlaylist.checked = storageValues.RemovedMixPlaylist

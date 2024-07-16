@@ -16,8 +16,8 @@ const Constants = {
             'expandido': 'expandido'
         },
         Speed: {
-            'default': 1,
-            MaxSpeed: 2
+            MaxSpeed: 2,
+            Default: 50,
         },
         IconVolume: {
             VolumeLow: `M8,21 L12,21 L17,26 L17,10 L12,15 L8,15 L8,21 Z M19,14 L19,22 C20.48,21.32 21.5,19.77 21.5,18 C21.5,16.26 20.48,14.74 19,14 Z`,

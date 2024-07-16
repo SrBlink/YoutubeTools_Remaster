@@ -45,13 +45,13 @@ function VideoScreen() {
 
 
     function getStorageValues() {
-        const volumeStorage = JSON.parse(_storageLocal.get(Constants.Storage.Volume)?.data);
+        const volumeStorage = JSON.parse(_storageLocal.get(Constants.Storage.Volume)?.data || '{}');
 
         return {
             Resolution: _storageLocal.get(Constants.Storage.Resolution)?.data,
             Expanded: _storageLocal.get(Constants.Storage.Expanded)?.data,
             Speed: (_storageLocal.get(Constants.Storage.Speed)?.data ?? 0) / 100 * Constants.Video.Speed.MaxSpeed,
-            Volume: volumeStorage.muted ? 0 : volumeStorage.volume / 100, //Criar método para atualizar a barra de audio do youtube com base no valor.
+            Volume: volumeStorage?.volume ? (volumeStorage.muted ? 0 : volumeStorage.volume / 100) : 1,
             RemovedViewed: _storageLocal.get(Constants.Storage.RemovedViewed)?.data,
             RemovedReels: _storageLocal.get(Constants.Storage.RemovedReels)?.data,
             RemovedMixPlaylist: _storageLocal.get(Constants.Storage.RemovedMixPlaylist)?.data,

@@ -70,6 +70,7 @@ function VideoScreen() {
         _event.on(Constants.Events.Window.CloseScreen, deleteVideoCheck)
         _event.on(Constants.Events.Window.FocusScreen, async () => {
 
+            refreshDefaultScreen();
             if (_route.isVideoScreenUrl()) {
                 await refreshVideoScreen()
                 if (!isVideoCheck()) insertVideoCheck();

@@ -50,6 +50,7 @@ function CreateMenuConfig() {
 
         _event.on(Constants.Events.Route.VideoScreen, refreshMenuConfig);
         _event.on(Constants.Events.Window.FocusScreen, refreshMenuConfig);
+        _event.on(Constants.Events.Window.KeyPress, handleControlSpeed)
     }
 
     async function createMenuTemplate() {
@@ -156,6 +157,40 @@ function CreateMenuConfig() {
         const expanded = event?.target?.value;
         _storageLocal.insert(Constants.Storage.Expanded, { data: expanded });
         _event.emit(Constants.Events.MenuConfig.Expanded, expanded);
+    }
+
+
+    async function handleControlSpeed(event) {
+        if (!event.data) return;
+
+        const keyPress = event.data;
+
+        if (!keyPress.altKey) return;
+
+        const speedsControls = {
+            '1': (oldSpeed) => oldSpeed - 0.25,
+            '2': () => 1,
+            '3': (oldSpeed) => oldSpeed + 0.25,
+        }
+
+        const speedVideo = doc.q('video').playbackRate
+
+        const controlKey = speedsControls[keyPress.key]
+
+        if (!controlKey) return;
+
+        const newSpeed = controlKey(speedVideo);
+
+
+        if (newSpeed < 0.25 || newSpeed > Constants.Video.Speed.MaxSpeed) return;
+
+        console.log("nova velocidade calculada ... ", newSpeed)
+
+        const speedMenu = (newSpeed * 100 / Constants.Video.Speed.MaxSpeed);
+
+        _storageLocal.insert(Constants.Storage.Speed, { data: speedMenu });
+        _event.emit(Constants.Events.MenuConfig.Speed, newSpeed)
+        await refreshMenuConfig();
     }
 
     function handleSpeed(event) {

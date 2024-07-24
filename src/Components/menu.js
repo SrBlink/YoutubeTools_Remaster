@@ -50,7 +50,7 @@ function CreateMenuConfig() {
 
         _event.on(Constants.Events.Route.VideoScreen, refreshMenuConfig);
         _event.on(Constants.Events.Window.FocusScreen, refreshMenuConfig);
-        _event.on(Constants.Events.Window.KeyPress, handleControlSpeed)
+        _event.on(Constants.Events.Window.KeyPress, handleKeyPressSpeed)
     }
 
     async function createMenuTemplate() {
@@ -160,7 +160,7 @@ function CreateMenuConfig() {
     }
 
 
-    async function handleControlSpeed(event) {
+    async function handleKeyPressSpeed(event) {
         if (!event.data) return;
 
         const keyPress = event.data;

@@ -165,6 +165,8 @@ function VideoScreen() {
 
     async function setVideoSpeed(velocidade) {
 
+        console.log("velocidade chegando ... ", velocidade);
+        
         if (!velocidade) return;
 
         const video = await doc.qAttributeAsync('video', 'src')
@@ -239,6 +241,13 @@ function VideoScreen() {
         intervalRemovedReels = setInterval(() => {
 
             var listVideosDelete = [];
+
+            doc.qAll('ytd-video-renderer').forEach(video => {
+                const shortsVideo = video.q('a#thumbnail')?.getAttribute('href')?.indexOf('shorts') > -1;
+                if (shortsVideo) {
+                    listVideosDelete.push(video);
+                }
+            })
 
             //Retirar os reels de bandeja.
             listVideosDelete.push(...doc.qAll('ytd-reel-shelf-renderer'));

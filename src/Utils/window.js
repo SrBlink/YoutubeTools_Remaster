@@ -4,6 +4,7 @@ function WindowEvents() {
     function on() {
         addCloseEvent();
         addFocusEvent();
+        addKeyDownEvent();
     }
 
     function addCloseEvent() {
@@ -18,6 +19,12 @@ function WindowEvents() {
         window.addEventListener('focus', () => {
             console.log("janela navegador focada ...");
             _event.emit(Constants.Events.Window.FocusScreen);
+        })
+    }
+
+    function addKeyDownEvent() {
+        window.addEventListener('keydown', (event) => {
+            _event.emit(Constants.Events.Window.KeyPress, { data: event })
         })
     }
 

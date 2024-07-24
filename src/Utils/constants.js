@@ -54,7 +54,8 @@ const Constants = {
         },
         Window: {
             FocusScreen: 'FOCUS_SCREEN',
-            CloseScreen: 'CLOSE_SCREEN'
+            CloseScreen: 'CLOSE_SCREEN',
+            KeyPress: 'KEY_PRESS'
         }
 
     }

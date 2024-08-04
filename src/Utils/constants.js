@@ -16,6 +16,7 @@ const Constants = {
             'expandido': 'expandido'
         },
         Speed: {
+            HandleSpeed: 0.10,
             MaxSpeed: 2,
             Default: 50,
         },

@@ -168,9 +168,9 @@ function CreateMenuConfig() {
         if (!keyPress.altKey) return;
 
         const speedsControls = {
-            '1': (oldSpeed) => oldSpeed - 0.25,
+            '1': (oldSpeed) => oldSpeed - Constants.Video.Speed.HandleSpeed,
             '2': () => 1,
-            '3': (oldSpeed) => oldSpeed + 0.25,
+            '3': (oldSpeed) => oldSpeed + Constants.Video.Speed.HandleSpeed,
         }
 
         const speedVideo = doc.q('video').playbackRate
@@ -182,7 +182,7 @@ function CreateMenuConfig() {
         const newSpeed = controlKey(speedVideo);
 
 
-        if (newSpeed < 0.25 || newSpeed > Constants.Video.Speed.MaxSpeed) return;
+        if (newSpeed < 0.10 || newSpeed > Constants.Video.Speed.MaxSpeed) return;
 
         console.log("nova velocidade calculada ... ", newSpeed)
 

@@ -168,21 +168,25 @@ function CreateMenuConfig() {
         if (!keyPress.altKey) return;
 
         const speedsControls = {
-            '1': (oldSpeed) => oldSpeed - Constants.Video.Speed.HandleSpeed,
+            '1': (oldSpeed) => +(oldSpeed - Constants.Video.Speed.HandleSpeed).toFixed(2),
             '2': () => 1,
-            '3': (oldSpeed) => oldSpeed + Constants.Video.Speed.HandleSpeed,
+            '3': (oldSpeed) => +(oldSpeed + Constants.Video.Speed.HandleSpeed).toFixed(2),
         }
 
         const speedVideo = doc.q('video').playbackRate
 
         const controlKey = speedsControls[keyPress.key]
 
+        var type;
+        if (keyPress.key === '1') type = Constants.Video.Speed.TypeDecrement;
+        else if (keyPress.key === '3') type = Constants.Video.Speed.TypeIncrement;
+
         if (!controlKey) return;
 
-        const newSpeed = controlKey(speedVideo);
+        var newSpeed = controlKey(speedVideo);
 
-
-        if (newSpeed < 0.10 || newSpeed > Constants.Video.Speed.MaxSpeed) return;
+        if (newSpeed < Constants.Video.Speed.MinSpeed) newSpeed = speedVideo;
+        else if (newSpeed > Constants.Video.Speed.MaxSpeed) newSpeed = speedVideo;
 
         console.log("nova velocidade calculada ... ", newSpeed)
 
@@ -190,6 +194,8 @@ function CreateMenuConfig() {
 
         _storageLocal.insert(Constants.Storage.Speed, { data: speedMenu });
         _event.emit(Constants.Events.MenuConfig.Speed, newSpeed)
+        _event.emit(Constants.Events.MenuConfig.HandleKeySpeed, { speed: newSpeed, type });
+
         await refreshMenuConfig();
     }
 

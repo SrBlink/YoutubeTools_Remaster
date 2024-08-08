@@ -3,6 +3,7 @@ function VideoScreen() {
     var intervalRemovedVideoViewed;
     var intervalRemovedReels;
     var intervalRemovedMixPlaylists;
+    var intervalSpeedViewed;
 
     async function on() {
         onEvents();
@@ -80,6 +81,7 @@ function VideoScreen() {
         _event.on(Constants.Events.MenuConfig.Resolution, setVideoResolution)
         _event.on(Constants.Events.MenuConfig.Expanded, setVideoExpanded)
         _event.on(Constants.Events.MenuConfig.Speed, setVideoSpeed)
+        _event.on(Constants.Events.MenuConfig.HandleKeySpeed, viewSpeedVideo);
         _event.on(Constants.Events.MenuConfig.RemovedViewed, setRemovedViewed)
         _event.on(Constants.Events.MenuConfig.RemovedReels, setRemovedReels)
         _event.on(Constants.Events.MenuConfig.RemovedMixPlaylist, setRemovedMixPlaylist)
@@ -163,17 +165,18 @@ function VideoScreen() {
         }
     }
 
-    async function setVideoSpeed(velocidade) {
+    async function setVideoSpeed(speed) {
 
-        console.log("velocidade chegando ... ", velocidade);
-        
-        if (!velocidade) return;
+        console.log("velocidade chegando ... ", speed);
+
+        if (!speed) return;
 
         const video = await doc.qAttributeAsync('video', 'src')
 
         if (!video) return;
 
-        video.playbackRate = velocidade;
+        video.playbackRate = speed;
+
     }
 
     async function setVideoTranslate(translateMode) {
@@ -325,6 +328,35 @@ function VideoScreen() {
 
         video.volume = volume;
         await updateIconVolume(volume);
+    }
+
+    async function viewSpeedVideo({ speed, type }) {
+        //Pegar o layout para colocar a velocidade
+        const layoutVideo = doc.q('#container #movie_player');
+
+        layoutVideo.style.position = 'relative'
+
+        var containerSpeed = doc.q('.container-speed-viewed')
+
+        if (!containerSpeed) containerSpeed = doc.create('div', { class: 'container-speed-viewed' })
+
+        var speedText = `${speed}x`;
+
+        if (type == Constants.Video.Speed.TypeIncrement) {
+            speedText = `${speed}x <i class="fa fa-forward" aria-hidden="true"></i>`
+        } else if (type == Constants.Video.Speed.TypeDecrement) {
+            speedText = ` <i class="fa fa-backward" aria-hidden="true"></i> ${speed}x`
+        }
+
+        containerSpeed.innerHTML = speedText;
+        containerSpeed.classList.add('active');
+
+        layoutVideo.appendChild(containerSpeed);
+
+        clearInterval(intervalSpeedViewed);
+        intervalSpeedViewed = setTimeout(() => {
+            containerSpeed.classList.remove('active');
+        }, 200);
     }
 
     return {

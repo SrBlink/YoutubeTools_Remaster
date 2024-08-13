@@ -4,7 +4,7 @@
   right: 0;
   top: 100px;
   max-width: 200px;
-  height: 270px;
+  /* height: 315px; */
   z-index: 9999;
   background-color: #ffffff00;
   overflow: hidden;
@@ -33,6 +33,7 @@
   border-radius: 0px 0px 0px 10px;
   max-width: 0px;
   transition: max-width 0.3s ease-in-out;
+  height: 100%;
 }
 
 .tools-painel-content {
@@ -76,4 +77,48 @@
   gap: 2px;
   font-size: 11px;
   font-weight: bold;
+}
+
+
+.container-speed-viewed {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: #fff;
+  font-size: 15px;
+  z-index: 99;
+  background-color: #00000080;
+  padding: 10px;
+  border-radius: 25px;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out
+}
+
+.container-speed-viewed.active {
+  opacity: 1;
+}
+
+.btn-rotacionar{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  width: 20px;
+  border-radius: 50%;
+  padding: 4px;
+}
+
+.btn-rotacionar:hover{
+  cursor: pointer;
+  background-color: #0000004a;
+}
+
+.icon-rotacionar{
+  font-size: 20px !important;
 }

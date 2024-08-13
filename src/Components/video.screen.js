@@ -78,6 +78,8 @@ function VideoScreen() {
             }
         })
 
+
+        _event.on(Constants.Events.MenuConfig.RotateVideo, rotateVideo)
         _event.on(Constants.Events.MenuConfig.Resolution, setVideoResolution)
         _event.on(Constants.Events.MenuConfig.Expanded, setVideoExpanded)
         _event.on(Constants.Events.MenuConfig.Speed, setVideoSpeed)
@@ -245,12 +247,17 @@ function VideoScreen() {
 
             var listVideosDelete = [];
 
-            doc.qAll('ytd-video-renderer').forEach(video => {
-                const shortsVideo = video.q('a#thumbnail')?.getAttribute('href')?.indexOf('shorts') > -1;
+            listaVideos = doc.qAll('ytd-compact-video-renderer');
+            listaVideos.push(...doc.qAll('ytd-video-renderer'))
+
+            listaVideos.forEach(video => {
+                const shortsVideo = video.q('a')?.getAttribute('href')?.indexOf('shorts') > -1;
+
                 if (shortsVideo) {
                     listVideosDelete.push(video);
                 }
             })
+
 
             //Retirar os reels de bandeja.
             listVideosDelete.push(...doc.qAll('ytd-reel-shelf-renderer'));
@@ -259,11 +266,15 @@ function VideoScreen() {
             listVideosDelete.push(...doc.qAll('ytd-video-renderer badge-shape[aria-label="Shorts"]'))
 
             listVideosDelete?.forEach(reels => {
+
                 if (reels) {
-                    console.log('Reels removed...')
-                    reels?.remove()
+                    // debugger;
+                    // console.log('Reels removed...')
+                    reels.innerHTML = '';
                 }
             })
+
+
 
         }, Constants.TimeVideosRemove);
     }
@@ -357,6 +368,21 @@ function VideoScreen() {
         intervalSpeedViewed = setTimeout(() => {
             containerSpeed.classList.remove('active');
         }, 200);
+    }
+
+    async function rotateVideo(event) {
+        console.log("Chegando rotate video...", event)
+
+        const video = await doc.qAttributeAsync('video', 'src');
+
+
+        var positionInitial = +video.style.transform.replace(/\D/g, '');
+
+        if (!positionInitial) positionInitial = 360
+
+        video.style.transform = `rotate(${positionInitial + Constants.Video.Rotate.RotateDeg}deg)`
+
+
     }
 
     return {

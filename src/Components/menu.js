@@ -13,6 +13,7 @@ function CreateMenuConfig() {
         removedViewed: null,
         removedReels: null,
         removedMixPlaylist: null,
+        buttonRotate: null,
     }
 
     async function on() {
@@ -60,7 +61,9 @@ function CreateMenuConfig() {
         const menuHtml = `
              <div class="tools-container"> 
                 <div id="seta-toogle-show-menu" class="tools-seta-painel">
-                    <i class="fa fa-angle-left"></i>
+                <span class="material-symbols-outlined">
+                    chevron_left
+                </span>
                 </div>
                 <div id="tools-painel-menu" class="tools-painel">
                     <div class="tools-painel-content">
@@ -84,6 +87,13 @@ function CreateMenuConfig() {
                         <input id="input-speed-option-menu" class="tools-painel-range" type="range" />
                         <small id="small-speed-text-menu"class="tools-painel-small"> </small>
 
+                        <label class="tools-painel-label">Rotacionar</label>
+                        <div id="tools-btn-rotacionar" class="btn-rotacionar">
+                            <span class="material-symbols-outlined icon-rotacionar">
+                                screen_rotation
+                            </span>
+                        </div>
+
                         <label class="tools-painel-label">Remoção</label>
                         <div class="tools-container-checkbox"> 
                             <input type="checkbox" id="input-checkbox-visualizacao-option" name="input-checkbox-visualizacao" />
@@ -97,6 +107,7 @@ function CreateMenuConfig() {
                             <input type="checkbox" id="input-checkbox-mix-option" name="input-checkbox-mix" />
                             <label for="input-checkbox-mix-option">Mix Playlists</label>
                         </div>
+
                     </div>
                 </div>
              </div>       
@@ -115,6 +126,7 @@ function CreateMenuConfig() {
         controlsMenu.removedViewed = await doc.qAsync('#input-checkbox-visualizacao-option')
         controlsMenu.removedReels = await doc.qAsync('#input-checkbox-reels-option')
         controlsMenu.removedMixPlaylist = await doc.qAsync('#input-checkbox-mix-option')
+        controlsMenu.buttonRotate = await doc.qAsync('#tools-btn-rotacionar')
     }
 
     async function createEvents() {
@@ -125,7 +137,12 @@ function CreateMenuConfig() {
         controlsMenu.removedViewed.event('change', handleRemovedViewed);
         controlsMenu.removedReels.event('change', handleRemovedReels);
         controlsMenu.removedMixPlaylist.event('change', handleRemovedMixPlaylist);
+        controlsMenu.buttonRotate.event('click', handleRotateVideo)
 
+    }
+
+    function handleRotateVideo(event) {
+        _event.emit(Constants.Events.MenuConfig.RotateVideo, { data: event })
     }
 
     function handleRemovedMixPlaylist(event) {
@@ -214,8 +231,13 @@ function CreateMenuConfig() {
     async function handleShowMenu(toggle = showMenu) {
 
         showMenu = !toggle;
-        const arrowRight = `<i class="fa fa-angle-right"></i>`;
-        const arrowLeft = `<i class="fa fa-angle-left"></i>`;
+        const arrowRight = `<span class="material-symbols-outlined">
+                                chevron_right
+                            </span>`;
+
+        const arrowLeft = `<span class="material-symbols-outlined">
+                                chevron_left
+                            </span>`;
 
         if (showMenu) {
             controlsMenu.menu.classList.add('active');

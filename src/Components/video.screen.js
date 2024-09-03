@@ -225,7 +225,8 @@ function VideoScreen() {
             listVideosDelete?.filter(videoLayer => videoLayer.q('#progress'))?.forEach(videosViewed => {
                 if (videosViewed) {
                     console.log("Videos viewed removed ...")
-                    videosViewed.innerHTML = '';
+                    // videosViewed.innerHTML = '';
+                    videosViewed.style.display = 'none';
                 }
             })
 
@@ -270,7 +271,8 @@ function VideoScreen() {
                 if (reels) {
                     // debugger;
                     // console.log('Reels removed...')
-                    reels.innerHTML = '';
+                    // reels.innerHTML = '';
+                    reels.style.display = 'none'
                 }
             })
 
